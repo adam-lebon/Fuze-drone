@@ -4,6 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
+    "start": "nodemon ./server/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/reglisse44/Fuze-drone-server/issues"
   },
-  "homepage": "https://github.com/reglisse44/Fuze-drone-server#readme"
+  "homepage": "https://github.com/reglisse44/Fuze-drone-server#readme",
+  "dependencies": {
+    "@types/node": "0.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0",
+    "ts-node": "^1.7.0"
+  }
 }
