@@ -3,7 +3,6 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ItemDetailsPage } from '../pages/item-details/item-details';
-import { ListPage } from '../pages/list/list';
 import { NavigationPage} from '../pages/navigation/navigation';
 
 @NgModule({
@@ -11,7 +10,6 @@ import { NavigationPage} from '../pages/navigation/navigation';
     MyApp,
     HomePage,
     ItemDetailsPage,
-    ListPage,
     NavigationPage
   ],
   imports: [
@@ -22,7 +20,6 @@ import { NavigationPage} from '../pages/navigation/navigation';
     MyApp,
     HomePage,
     ItemDetailsPage,
-    ListPage,
     NavigationPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
