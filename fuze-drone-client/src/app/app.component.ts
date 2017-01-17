@@ -25,7 +25,7 @@ export class MyApp {
 
     // set our app's pages
     this.pages = [
-      { title: 'Acceuil', component: HomePage },
+      { title: 'Accueil', component: HomePage },
       { title: 'Navigation', component: NavigationPage }
     ];
   }
