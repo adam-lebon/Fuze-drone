@@ -11,13 +11,9 @@
 <ion-content padding>
 
   <h3>Bienvenue!</h3>
-    <button ion-button color="danger" round>Connecter le drone</button>
-    <h4>Une fois le drone connecté, vous pouvez lancer la navigation</h4>
-    <button ion-button [navPush]="navigationPage" color="danger" round>Démarrer la navigation</button>
-  <p>
-    Pensez à vérifier le niveau de batterie du drone avant toute utilisation.
-  </p>
-
-
+    <button ion-button [navPush]="navigationPage" color="danger" round>Navigation</button>
+    <p>
+      <button ion-button [navPush]="videoPage" color="danger" round>Video</button>
+    </p>
 
 </ion-content>

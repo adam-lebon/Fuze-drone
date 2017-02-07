@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavigationPage} from '../navigation/navigation';
+import { NavigationPage } from '../navigation/navigation';
+
 
 @Component({
   selector: 'home',

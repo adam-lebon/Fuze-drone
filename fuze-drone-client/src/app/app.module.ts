@@ -2,15 +2,15 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ItemDetailsPage } from '../pages/item-details/item-details';
-import { NavigationPage} from '../pages/navigation/navigation';
+import { NavigationPage } from '../pages/navigation/navigation';
+import { ParametresPage } from '../pages/parametres/parametres';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    ItemDetailsPage,
-    NavigationPage
+    NavigationPage,
+    ParametresPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -19,8 +19,8 @@ import { NavigationPage} from '../pages/navigation/navigation';
   entryComponents: [
     MyApp,
     HomePage,
-    ItemDetailsPage,
-    NavigationPage
+    NavigationPage,
+    ParametresPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })
