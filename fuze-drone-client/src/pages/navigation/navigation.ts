@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform } from 'ionic-angular';
-import { ScreenOrientation, StatusBar } from 'ionic-native';
+import { StatusBar } from 'ionic-native';
 import * as nipplejs from 'nipplejs';
 
 @Component({
@@ -14,6 +14,9 @@ export class NavigationPage implements OnInit, OnDestroy {
   constructor(private platform:Platform) { }
 
   ngOnInit(){
+    if(this.platform.is('mobile')) {
+      StatusBar.hide();
+    }
     this.manager = nipplejs.create({
       zone: document.getElementById('joystickLeft'),
       color: "#FF0000",
@@ -27,15 +30,11 @@ export class NavigationPage implements OnInit, OnDestroy {
       catchDistance: 50
     });
 
-    if(this.platform.is('mobile')) {
-      ScreenOrientation.lockOrientation('landscape');
-      StatusBar.hide();
-    }
+
   }
 
   ngOnDestroy(){
     if(this.platform.is('mobile')) {
-    ScreenOrientation.unlockOrientation();
       StatusBar.show();
     }
   }
