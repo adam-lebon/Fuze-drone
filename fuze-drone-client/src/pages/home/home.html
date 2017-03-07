@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>FuzeDrone</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+
+  <h3>Bienvenue!</h3>
+    <button ion-button [navPush]="navigationPage" color="danger" round>Navigation</button>
+    <p>
+      <button ion-button [navPush]="videoPage" color="danger" round>Video</button>
+    </p>
+
+</ion-content>
