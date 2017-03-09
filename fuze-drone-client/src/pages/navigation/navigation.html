@@ -6,6 +6,12 @@
 
 <ion-content >
   <canvas id="video"></canvas>
+	<script type="text/javascript" src="jsmpeg.min.js"></script>
+	<script type="text/javascript">
+		var canvas = document.getElementById('video-canvas');
+		var url = 'ws://10.9.0.1:8082/';
+		var player = new JSMpeg.Player(url, {canvas: canvas});
+	</script>
   <div id='joystickLeft'></div>
   <div id='joystickRight'></div>
 </ion-content>
