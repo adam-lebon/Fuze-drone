@@ -20,8 +20,9 @@
   "dependencies": {
     "@types/node": "0.0.2",
     "babel-preset-es2015-node6": "^0.4.0",
-    "babel-register": "^6.23.0",
-    "ws": "^2.2.0"
+    "babel-preset-node6": "^11.0.0",
+    "babel-register": "^6.24.0",
+    "ws": "^2.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0",
