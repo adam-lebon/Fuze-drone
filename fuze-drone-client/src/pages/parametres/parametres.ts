@@ -6,6 +6,11 @@ import { Component } from '@angular/core';
 })
 
 export class ParametresPage {
+  modeJoystick:any = "semi";
+  sensibiliteJoystick:any = "400";
+  tailleJoystick:any = "500";
+  couleurGaucheJoystick:any="rouge";
+  couleurDroiteJoystick:any="vert";
   constructor() { }
 
 

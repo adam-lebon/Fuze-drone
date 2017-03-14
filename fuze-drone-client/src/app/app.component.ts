@@ -4,6 +4,7 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import { NavigationPage } from '../pages/navigation/navigation';
 import { ParametresPage } from '../pages/parametres/parametres';
+import { InformationsPage } from '../pages/informations/informations';
 
 @Component({
   templateUrl: 'app.html'

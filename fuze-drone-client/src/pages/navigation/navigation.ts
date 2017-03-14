@@ -35,7 +35,7 @@ export class NavigationPage implements OnInit, OnDestroy {
     var canvas = document.getElementById('video-canvas');
     var player = new JSMpeg(client, {canvas: canvas});*/
     var canvas = document.getElementById('video');
-    var url = 'ws://172.22.2.0:8082/';
+    var url = 'ws://10.9.0.1:8082/';
     var player = new JSMpeg.Player(url, {canvas: canvas});
   }
 

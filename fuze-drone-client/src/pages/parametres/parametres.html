@@ -1,12 +1,56 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Parametres</ion-title>
+    <ion-title>Paramètres</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <h3>Parametres</h3>
+  <ion-list>
+  <ion-list-header>Sensibilité des Joysticks</ion-list-header>
+    <ion-item>
+      <ion-range min="1" max="1000" [(ngModel)]="sensibiliteJoystick" color="danger">
+        <ion-label range-left>1</ion-label>
+        <ion-label range-right>5</ion-label>
+      </ion-range>
+    </ion-item>
+  </ion-list>
+<ion-list>
+<ion-list-header>Taille des Josticks</ion-list-header>
+ <ion-item>
+  <ion-range min="1" max="1000" [(ngModel)]="tailleJoystick" color="danger">
+    <ion-label range-left>1</ion-label>
+    <ion-label range-right>2</ion-label>
+  </ion-range>
+ </ion-item>
+ </ion-list>
+ <ion-list>
+ <ion-list-header>Mode des Joysticks</ion-list-header>
+  <ion-item>
+    <ion-select [(ngModel)]="modeJoystick">
+      <ion-label>Mode</ion-label>
+      <ion-option value="semi">Semi(conseillé)</ion-option>
+      <ion-option value="dynamic">Dynamic</ion-option>
+      <ion-option value="static">Static</ion-option>
+    </ion-select>
+  </ion-item>
+</ion-list>
+<ion-list>
+  <ion-list-header>Couleur des Joysticks</ion-list-header>
+   <ion-item>
+     <ion-select [(ngModel)]="couleurGaucheJoystick">
+       <ion-option value="vert">Vert</ion-option>
+       <ion-option value="bleu">Bleu</ion-option>
+       <ion-option value="rouge">Rouge</ion-option>
+     </ion-select>
+     <ion-select [(ngModel)]="couleurDroiteJoystick">
+       <ion-label>Couleur</ion-label>
+       <ion-option value="vert">Vert</ion-option>
+       <ion-option value="bleu">Bleu</ion-option>
+       <ion-option value="rouge">Rouge</ion-option>
+     </ion-select>
+   </ion-item>
+ </ion-list>
+
+
+
 </ion-content>

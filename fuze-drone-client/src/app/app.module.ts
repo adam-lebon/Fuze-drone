@@ -4,13 +4,15 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { NavigationPage } from '../pages/navigation/navigation';
 import { ParametresPage } from '../pages/parametres/parametres';
+import { InformationsPage } from '../pages/informations/informations';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     NavigationPage,
-    ParametresPage
+    ParametresPage,
+    InformationsPage
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -20,7 +22,8 @@ import { ParametresPage } from '../pages/parametres/parametres';
     MyApp,
     HomePage,
     NavigationPage,
-    ParametresPage
+    ParametresPage,
+    InformationsPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })
