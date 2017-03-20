@@ -15,3 +15,5 @@ server.on('connection', ws => {
     console.log(message);
   })
 });
+
+export { server };
