@@ -23,6 +23,8 @@
     "babel-preset-node6": "^11.0.0",
     "babel-register": "^6.24.0",
     "events": "^1.1.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
     "jspack": "0.0.4",
     "serialport": "^4.0.7",
     "underscore": "^1.8.3",

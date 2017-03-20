@@ -17,8 +17,6 @@ SerialPort.list((err, ports) => {
     if (port.pnpId && port.pnpId.includes('PX4')) {
       console.log(`Found flight controller on port ${port.comName}`);
       initSerialPort(port.comName);
-    }else {
-      initSerialPort('COM20');
     }
     console.log('---');
   })
@@ -39,12 +37,12 @@ function initSerialPort(portId){
 }
 
 mavlinkParser.on('message', (message) => {
-  console.log('Got a message !');
-  console.log(message);
+/*  console.log('Got a message !');
+  console.log(message);*/
 });
 
 mavlinkParser.on('ATTITUDE', (message) => {
-  console.log(message);
+//  console.log(message);
 });
 
 export { port };
