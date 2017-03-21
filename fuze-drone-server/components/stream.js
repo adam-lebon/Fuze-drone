@@ -1,5 +1,5 @@
 import { Config } from './config';
-import { WebSocket } from 'ws';
+import { Server } from 'ws';
 import Http from 'http';
 
 console.log(`Starting stream server on port: ${Config.stream.port.http}`);
@@ -8,13 +8,13 @@ const server = new Http.createServer(onRequest).listen(Config.stream.port.http);
 
 console.log(`Starting websocket stream server on port: ${Config.stream.port.websocket}`);
 
-const websocket = new WebSocket({ port: Config.stream.port.websocket });
+const websocket = new Server({ port: Config.stream.port.websocket });
 
 websocket.broadcast = function(data) {
 	websocket.clients.forEach(function each(client) {
-		if (client.readyState === WebSocket.OPEN) {
+		//if (client.readyState === Server.OPEN) {
 			client.send(data);
-		}
+		//}
 	});
 };
 
