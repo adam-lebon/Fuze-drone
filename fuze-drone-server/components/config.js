@@ -6,6 +6,7 @@ export const Config = {
     port: {
       websocket: 7778,
       http: 8080
-    }
+    },
+    maxClients: 1
   }
 };
