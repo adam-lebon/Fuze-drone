@@ -5,6 +5,8 @@ import { HomePage } from '../pages/home/home';
 import { NavigationPage } from '../pages/navigation/navigation';
 import { ParametresPage } from '../pages/parametres/parametres';
 import { InformationsPage } from '../pages/informations/informations';
+import { IonicStorageModule } from '@ionic/storage';
+import { ConfigService } from '../services/config.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,8 @@ import { InformationsPage } from '../pages/informations/informations';
     InformationsPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -25,6 +28,9 @@ import { InformationsPage } from '../pages/informations/informations';
     ParametresPage,
     InformationsPage
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+  providers: [
+    ConfigService,
+    {provide: ErrorHandler, useClass: IonicErrorHandler}
+  ]
 })
 export class AppModule {}
