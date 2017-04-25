@@ -26,6 +26,7 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "jspack": "0.0.4",
+    "mavlink_ardupilotmega_v1.0": "0.0.2",
     "serialport": "^4.0.7",
     "underscore": "^1.8.3",
     "util": "^0.10.3",
