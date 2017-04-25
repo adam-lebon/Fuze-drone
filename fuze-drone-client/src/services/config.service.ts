@@ -7,8 +7,7 @@ export class ConfigService {
 
   defaultConfig: Object = {
     modeJoystick: "semi",
-    sensibiliteJoystick: 200,
-    tailleJoystick: 150,
+    tailleJoystick: 100,
     couleurGaucheJoystick: "rouge",
     couleurDroiteJoystick: "vert"
   }
