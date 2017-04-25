@@ -17,7 +17,7 @@ const websocket = new Server({ port: Config.stream.port.websocket, backlog: Conf
 
 websocket.on('connection', ws => {
 
-	console.log(websocket.clients);
+	//console.log(websocket.clients);
 	if(websocket.clients.lenght === Config.stream.maxClients){
 		console.log('[STREAM-WS] New video client, but the server is full. Kicking client.');
 		ws.terminate();
@@ -43,9 +43,15 @@ websocket.on('connection', ws => {
 
 websocket.broadcast = function(data) {
 	websocket.clients.forEach(function each(client) {
-			client.send(data);
+			if (client !== websocket && client.readyState === Server.OPEN) {
+        client.send(data);
+      }
 	});
 };
+
+websocket.on('deconnection', function close() {
+  console.log('[STREAM-WS] JE ME CASSE VOUS ME FAITES CHIER !');
+});
 
 function onRequest(request, reply) {
   reply.connection.setTimeout(0); // On désactive la déconnexion automatique pour éviter de se faire déconnecter pour inactivité
