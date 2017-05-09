@@ -12,15 +12,19 @@ import { ConfigService } from '../../services/config.service';
 })
 
 export class NavigationPage implements OnInit, OnDestroy {
+  joystickSocket:WebSocket;
   joystickLeft:any;
   joystickRight:any;
+  isRecording:Boolean;
+  isKillingHornets:Boolean;
 
   constructor(private platform:Platform , private configService: ConfigService) { }
 
   ngOnInit(){
-    var joystickSocket = new WebSocket("ws://10.9.0.1:7777/");
+    this.joystickSocket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
     if(this.platform.is('mobile')) {
       StatusBar.hide();
+
     }
 
     this.joystickLeft = nipplejs.create({
@@ -30,17 +34,16 @@ export class NavigationPage implements OnInit, OnDestroy {
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
     }).on('move', (evt, data) => {
-      //console.log("1");
-      //console.log(Math.round((100*(data.instance.frontPosition.x)/(this.configService.config.tailleJoystick))*10)/10);
       console.log(Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500));
-  //    console.log(data.instance.frontPosition.y);
         let leftJoystick = {
-          type: "leftJoystick" ,
-          x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
-          y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+          command: "leftJoystick" ,
+          data: {
+            x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
+            y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+          }
         };
-        if(joystickSocket.readyState == 1){
-        joystickSocket.send(JSON.stringify(leftJoystick));
+        if(this.joystickSocket.readyState == 1){
+        this.joystickSocket.send(JSON.stringify(leftJoystick));
       }
     });
 
@@ -51,27 +54,21 @@ export class NavigationPage implements OnInit, OnDestroy {
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
     }).on('move', (evt, data) => {
-      console.log("2");
-      /*console.log(data.instance.frontPosition.x);
-      console.log(data.instance.frontPosition.y);*/
 
       let rightJoystick = {
-        type: "rightJoystick" ,
-        x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
-        y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+        command: "rightJoystick" ,
+        data: {
+          x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
+          y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+        }
       };
-      if(joystickSocket.readyState == 1){
-      joystickSocket.send(JSON.stringify(rightJoystick));
 
-    }
+      if(this.joystickSocket.readyState == 1){
+        this.joystickSocket.send(JSON.stringify(rightJoystick));
+      }
     });
 
-    /*var client = new WebSocket( 'ws://172.22.2.0:8082' );
-    var canvas = document.getElementById('video-canvas');
-    var player = new JSMpeg(client, {canvas: canvas});*/
-    new JSMpeg.Player('ws://10.9.0.1:7779/', {canvas: document.getElementById('video') });
-
-
+    new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
   }
 
   ngOnDestroy(){
@@ -79,5 +76,24 @@ export class NavigationPage implements OnInit, OnDestroy {
       StatusBar.show();
     }
   }
-
- }
+  toggleKillingHornets(){
+    console.log("a");
+    if(this.joystickSocket.readyState == 1){
+      if(this.isKillingHornets){
+        this.joystickSocket.send(JSON.stringify({ command: "stopKillingHornets" }));
+      }else{
+        this.joystickSocket.send(JSON.stringify({ command: "startKillingHornets" }));
+      }
+    }
+  }
+  toggleRecord(){
+    console.log("b");
+    if(this.joystickSocket.readyState == 1){
+      if(this.isRecording){
+        this.joystickSocket.send(JSON.stringify({ command: "stopRecord" }));
+      }else{
+        this.joystickSocket.send(JSON.stringify({ command: "startRecord" }));
+      }
+    }
+  }
+}

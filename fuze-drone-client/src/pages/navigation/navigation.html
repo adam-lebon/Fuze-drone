@@ -1,6 +1,14 @@
 <ion-header>
   <ion-navbar>
     <ion-title>Navigation</ion-title>
+    <ion-buttons right>
+        <ion-label >Camera</ion-label>
+        <ion-toggle (ionChange)="toggleRecord()" name="camera" value="false"></ion-toggle>
+      </ion-buttons>
+      <ion-buttons right>
+        <ion-label >Hornet</ion-label>
+        <ion-toggle (ionChange)="toggleKillingHornets()" name="hornet" value="false"></ion-toggle>
+      </ion-buttons>
   </ion-navbar>
 </ion-header>
 

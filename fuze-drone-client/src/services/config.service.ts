@@ -9,8 +9,9 @@ export class ConfigService {
     modeJoystick: "semi",
     tailleJoystick: 100,
     couleurGaucheJoystick: "rouge",
-    couleurDroiteJoystick: "vert"
-  }
+    couleurDroiteJoystick: "vert",
+    ipAdress: "10.9.0.1"
+    }
 
   constructor(private storage: Storage){
     this.storage.ready().then(() => {
