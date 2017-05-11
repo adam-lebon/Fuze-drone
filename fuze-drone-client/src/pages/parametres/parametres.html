@@ -1,12 +1,56 @@
 <ion-header>
   <ion-navbar>
-    <button ion-button menuToggle>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Parametres</ion-title>
+    <ion-title>Settings</ion-title>
+    <ion-buttons end>
+      <button ion-button (click)="save()" color="royal">Save</button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <h3>Parametres</h3>
+<ion-list>
+<ion-list-header>Size</ion-list-header>
+ <ion-item>
+  <ion-range min="75" max="125" [(ngModel)]="config.tailleJoystick" color="danger">
+    <ion-label range-left>1</ion-label>
+    <ion-label range-right>2</ion-label>
+  </ion-range>
+ </ion-item>
+ </ion-list>
+ <ion-list>
+ <ion-list-header>Mode</ion-list-header>
+  <ion-item>
+    <ion-select [(ngModel)]="config.modeJoystick">
+      <ion-label>Mode</ion-label>
+      <ion-option value="semi">Semi(recommended)</ion-option>
+      <ion-option value="dynamic">Dynamic</ion-option>
+    </ion-select>
+  </ion-item>
+</ion-list>
+<ion-list>
+  <ion-list-header>Colour</ion-list-header>
+   <ion-item>
+     <ion-select [(ngModel)]="config.couleurGaucheJoystick">
+        <ion-option value="#00FFFF">Blue</ion-option>
+       <ion-option value="#7CFC00">Green</ion-option>
+       <ion-option value="red">Red</ion-option>
+       <ion-option value="#FFFF00">Yellow</ion-option>
+     </ion-select>
+     <ion-select [(ngModel)]="config.couleurDroiteJoystick">
+       <ion-label>Colour</ion-label>
+       <ion-option value="#00FFFF">Blue</ion-option>
+      <ion-option value="#7CFC00">Green</ion-option>
+      <ion-option value="red">Red</ion-option>
+      <ion-option value="#FFFF00">Yellow</ion-option>
+
+     </ion-select>
+   </ion-item>
+ </ion-list>
+
+   <ion-item>
+       <ion-label floating>IP Adress</ion-label>
+       <ion-input [(ngModel)]="config.ipAdress"></ion-input>
+     </ion-item>
+
+
 </ion-content>

@@ -4,6 +4,8 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 import { HomePage } from '../pages/home/home';
 import { NavigationPage } from '../pages/navigation/navigation';
 import { ParametresPage } from '../pages/parametres/parametres';
+import { InformationsPage } from '../pages/informations/informations';
+import { ConfigService } from '../services/config.service';
 
 @Component({
   templateUrl: 'app.html'
@@ -17,7 +19,8 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
-    public menu: MenuController
+    public menu: MenuController,
+    public configService: ConfigService
   ) {
     this.initializeApp();
 
