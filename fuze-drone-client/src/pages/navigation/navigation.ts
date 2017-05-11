@@ -24,7 +24,6 @@ export class NavigationPage implements OnInit, OnDestroy {
     this.joystickSocket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
     if(this.platform.is('mobile')) {
       StatusBar.hide();
-
     }
 
     this.joystickLeft = nipplejs.create({

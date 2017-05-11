@@ -11,8 +11,6 @@ import { ConfigService } from '../../services/config.service';
 export class ParametresPage implements OnInit {
   config: Object = {};
 
-
-
   constructor(private toastCtrl: ToastController, private configService: ConfigService) { }
 
   ngOnInit(){
