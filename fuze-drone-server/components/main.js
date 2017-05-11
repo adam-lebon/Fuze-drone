@@ -1,3 +1,3 @@
 import './websocket';
-import './flightController';
+//import './flightController';
 import './stream';
