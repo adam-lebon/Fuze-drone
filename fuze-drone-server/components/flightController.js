@@ -63,9 +63,9 @@ console.log("TEST");
 
        });
 
-       this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
+       //this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
        this.overrideRc([1000, 1500, 1500, 1500, 0, 0, 0, 0]);
-       setTimeout(() => this.overrideRc([1000, 2000, 1500, 1500]), 6000);
+       setTimeout(() => this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1)) , 10000);
      });
    }
 
@@ -81,8 +81,13 @@ console.log("TEST");
          "chan7_raw": message.chan7_raw,
          "chan8_raw": message.chan8_raw,
        };
-       console.log(this.values.rcChannelsRaw);
+       //console.log(this.values.rcChannelsRaw);
      });
+
+     this.mavlinkParser.on('message', message => {
+       message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
+     });
+     console.log('_____');
    }
 
    overrideRc(rcChannels){
