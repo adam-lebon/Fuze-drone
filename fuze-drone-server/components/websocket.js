@@ -20,15 +20,19 @@ server.on('connection', ws => {
     let parsed = JSON.parse(message);
     switch (parsed.command) {
       case "leftJoystick":
-       channels[0] = parsed.data.x;
-       channels[1] = parsed.data.y;
-        flightController.overrideRc(channels);
+        channels[0] = parsed.data.x;
+        channels[1] = parsed.data.y;
+        flightController.sendCommand('rc_channels_override', channels);
         break;
 
       case "rightJoystick":
         channels[2] = parsed.data.x;
         channels[3] = parsed.data.y;
-        flightController.overrideRc(channels);
+        flightController.overrideRc('rc_channels_override', channels);
+        break;
+
+      case "mavlinkCommand":
+        flightController.sendCommand(message.data.cmdName, ...message.data.params);
         break;
 
       case "startRecord":

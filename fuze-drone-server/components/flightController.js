@@ -12,6 +12,7 @@ console.log("TEST");
        "RC_CHANNELS_RAW": {}
      };
      this.port = null;
+     this.security = null;
      this.mavlinkParser = new mavlink(undefined, 255);
 
      this.initListeners();
@@ -65,7 +66,13 @@ console.log("TEST");
 
        //this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
        this.overrideRc([1000, 1500, 1500, 1500, 0, 0, 0, 0]);
-       setTimeout(() => this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1)) , 10000);
+       setTimeout(() => {
+         this.mavlinkParser.on('message', message => {
+           console.log(message);
+           //message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
+         });
+         this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1));
+       } , 10000);
      });
    }
 
@@ -83,16 +90,16 @@ console.log("TEST");
        };
        //console.log(this.values.rcChannelsRaw);
      });
-
-     this.mavlinkParser.on('message', message => {
-       message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
-     });
-     console.log('_____');
    }
 
-   overrideRc(rcChannels){
-     //console.log(rcChannels);
-     this.mavlinkParser.send(new mavlink.messages.rc_channels_override(1, 1, ...rcChannels));
+   sendCommand(name, ...params){
+     if (name === "rc_channels_override") {
+
+       if(this.security) { clearTimeout(this.security); }
+
+       security = setTimeout(() => this.sendCommand("rc_channels_override", 0, 0, 0, 0, 0, 0, 0, 0), 1000);
+     }
+     this.mavlinkparser.send(new mavlink.messages[name](1, 1, params));
    }
  }
 
