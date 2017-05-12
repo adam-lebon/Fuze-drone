@@ -8,8 +8,8 @@ export class ConfigService {
   defaultConfig: Object = {
     modeJoystick: "semi",
     tailleJoystick: 100,
-    couleurGaucheJoystick: "rouge",
-    couleurDroiteJoystick: "vert",
+    couleurGaucheJoystick: "red",
+    couleurDroiteJoystick: "green",
     ipAdress: "10.9.0.1"
     }
 

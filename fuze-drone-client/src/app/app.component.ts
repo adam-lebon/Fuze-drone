@@ -13,7 +13,6 @@ import { ConfigService } from '../services/config.service';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  // make HelloIonicPage the root (or first) page
   rootPage: any = HomePage;
   pages: Array<{title: string, component: any}>;
 
@@ -24,7 +23,6 @@ export class MyApp {
   ) {
     this.initializeApp();
 
-    // set our app's pages
     this.pages = [
       { title: 'Accueil', component: HomePage },
       { title: 'Navigation', component: NavigationPage },
@@ -40,9 +38,7 @@ export class MyApp {
   }
 
   openPage(page) {
-    // close the menu when clicking a link from the menu
     this.menu.close();
-    // navigate to the new page if it is not the current page
     this.nav.setRoot(page.component);
   }
 }

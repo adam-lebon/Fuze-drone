@@ -21,7 +21,6 @@ export class HomePage implements OnInit, OnDestroy {
   ngOnInit(){
     if(this.platform.is('mobile')) {
       StatusBar.show();
-    //  ScreenOrientation.lockOrientation('landscape');
     }
   }
   ngOnDestroy(){
