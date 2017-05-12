@@ -4,8 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "nodemon ./server/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon ./index.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,20 @@
   },
   "homepage": "https://github.com/reglisse44/Fuze-drone-server#readme",
   "dependencies": {
-    "@types/node": "0.0.2"
+    "@types/node": "0.0.2",
+    "babel-preset-es2015-node6": "^0.4.0",
+    "babel-preset-node6": "^11.0.0",
+    "babel-register": "^6.24.0",
+    "events": "^1.1.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "jspack": "0.0.4",
+    "mavlink_ardupilotmega_v1.0": "0.0.2",
+    "prompt-promise": "^1.0.3",
+    "serialport": "^4.0.7",
+    "underscore": "^1.8.3",
+    "util": "^0.10.3",
+    "ws": "^2.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0",
