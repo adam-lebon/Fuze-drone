@@ -15,8 +15,8 @@ export class NavigationPage implements OnInit, OnDestroy {
   joystickLeft:any;
   joystickRight:any;
   isRecording:Boolean;
-  isKillingHornets:Boolean;
-  isArmed:Boolean;
+  isKilling:Boolean;
+  isArming:Boolean;
 
   constructor(private platform:Platform , private configService: ConfigService) { }
 
@@ -34,15 +34,25 @@ export class NavigationPage implements OnInit, OnDestroy {
       catchDistance: (((this.configService.config.tailleJoystick))/2)
     }).on('move', (evt, data) => {
       console.log(Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500));
-        let leftJoystick = {
+      let leftJoystick = {
+        command: "leftJoystick" ,
+        data: {
+          x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
+          y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+        }
+      };
+      if(this.joystickSocket.readyState == 1){
+        this.joystickSocket.send(JSON.stringify(leftJoystick));
+      }
+    }).on('end', () => {
+      if(this.joystickSocket.readyState == 1){
+        this.joystickSocket.send(JSON.stringify({
           command: "leftJoystick" ,
           data: {
-            x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
-            y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+            x: 1500,
+            y: 1500
           }
-        };
-        if(this.joystickSocket.readyState == 1){
-        this.joystickSocket.send(JSON.stringify(leftJoystick));
+        }));
       }
     });
 
@@ -64,7 +74,17 @@ export class NavigationPage implements OnInit, OnDestroy {
       if(this.joystickSocket.readyState == 1){
         this.joystickSocket.send(JSON.stringify(rightJoystick));
       }
-    });
+    }).on('end', () => {
+      if(this.joystickSocket.readyState == 1){
+        this.joystickSocket.send(JSON.stringify({
+          command: "rightJoystick" ,
+          data: {
+            x: 1500,
+            y: 1500
+          }
+        }));
+      }
+    });;
     new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
   }
 
@@ -73,12 +93,14 @@ export class NavigationPage implements OnInit, OnDestroy {
       StatusBar.show();
     }
   }
-  toggleKillingHornets(){
+  toggleHornets(){
     if(this.joystickSocket.readyState == 1){
-      if(this.isKillingHornets){
+      if(this.isKilling){
         this.joystickSocket.send(JSON.stringify({ command: "stopKillingHornets" }));
+        this.isKilling = true;
       }else{
         this.joystickSocket.send(JSON.stringify({ command: "startKillingHornets" }));
+        this.isKilling= false;
       }
     }
   }
@@ -86,17 +108,21 @@ export class NavigationPage implements OnInit, OnDestroy {
     if(this.joystickSocket.readyState == 1){
       if(this.isRecording){
         this.joystickSocket.send(JSON.stringify({ command: "stopRecord" }));
+        this.isRecording = true;
       }else{
         this.joystickSocket.send(JSON.stringify({ command: "startRecord" }));
+        this.isRecording = false;
       }
     }
   }
   toggleArm(){
     if(this.joystickSocket.readyState == 1){
-      if(this.isArmed){
-        this.joystickSocket.send(JSON.stringify({ command: "disarm" }));
+      if(this.isArming){
+        this.joystickSocket.send(JSON.stringify({ command: "mavlinkCommand", data: { name: "command_long", params: [400,0,1]} }));
+        this.isArming = true;
       }else{
-        this.joystickSocket.send(JSON.stringify({ command: "arm" }));
+        this.joystickSocket.send(JSON.stringify({ command: "mavlinkCommand", data: { name: "command_long", params: [400,0,0]} }));
+        this.isArming = false;
       }
     }
   }
