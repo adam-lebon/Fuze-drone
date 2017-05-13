@@ -43,7 +43,7 @@ websocket.on('connection', ws => {
 
 websocket.broadcast = function(data) {
 	websocket.clients.forEach(function each(client) {
-			if (client !== websocket && client.readyState === Server.OPEN) {
+			if (client.readyState === websocket.OPEN) {
         client.send(data);
       }
 	});

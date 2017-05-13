@@ -16,19 +16,19 @@ server.on('connection', ws => {
   console.log('New client !');
 
   ws.on('message', message => {
-    //console.log(message);
+    console.log(message);
     let parsed = JSON.parse(message);
     switch (parsed.command) {
       case "leftJoystick":
         channels[0] = parsed.data.x;
         channels[1] = parsed.data.y;
-        flightController.sendCommand('rc_channels_override', channels);
+        flightController.sendCommand('rc_channels_override', ...channels);
         break;
 
       case "rightJoystick":
         channels[2] = parsed.data.x;
         channels[3] = parsed.data.y;
-        flightController.overrideRc('rc_channels_override', channels);
+        flightController.sendCommand('rc_channels_override', ...channels);
         break;
 
       case "mavlinkCommand":
