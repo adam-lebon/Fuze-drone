@@ -64,15 +64,16 @@ console.log("TEST");
 
        });
 
-       //this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
+       this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
        //this.overrideRc([1000, 1500, 1500, 1500, 0, 0, 0, 0]);
        setTimeout(() => {
          this.mavlinkParser.on('message', message => {
            //console.log(message);
            //message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
          });
+         this.sendCommand('rc_channels_override', 1600, 1650, 1700, 1750);
          //this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1));
-       } , 10000);
+       } , 1000);
      });
    }
 
@@ -88,7 +89,7 @@ console.log("TEST");
          "chan7_raw": message.chan7_raw,
          "chan8_raw": message.chan8_raw,
        };
-       //console.log(this.values.rcChannelsRaw);
+       console.log('Reception des valeurs: '+ JSON.stringify(this.values.rcChannelsRaw));
      });
    }
 
@@ -99,8 +100,8 @@ console.log("TEST");
 
        //security = setTimeout(() => this.sendCommand("rc_channels_override", 0, 0, 0, 0, 0, 0, 0, 0), 1000);
      }
-     console.log(params);
-     //this.mavlinkParser.send(new mavlink.messages[name](1, 1, params));
+     console.log('Envoie de valeurs de test: ' + params);
+     this.mavlinkParser.send(new mavlink.messages[name](1, 1, ...params));
    }
  }
 
