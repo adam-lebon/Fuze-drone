@@ -1,23 +1,38 @@
 import { Config } from './config';
 import { Server } from 'ws';
 import Http from 'http';
+import spawn from 'child_process';
+//import execFile from 'child_process';
 
-var nbClients = 0;
-
-
-var test1=50000000000000,
-		test2=52;
 console.log(`[GENERAL] Starting stream server on port: ${Config.stream.port.http}`);
 
 const server = new Http.createServer(onRequest).listen(Config.stream.port.http);
 
 console.log(`[GENERAL] Starting websocket stream server on port: ${Config.stream.port.websocket} `);
 
-const websocket = new Server({ port: Config.stream.port.websocket, backlog: Config.stream.maxClients, maxPayload: test1});
+const websocket = new Server({ port: Config.stream.port.websocket});
+
+console.log(`[GENERAL] Starting FFMPEG on the stream server:`);
+
+/*const child = execFile('ffmpeg', ['v4l2 -video_size 640x480 -i /dev/video0 -vcodec mpeg1video -threads 4 -f mpegts http://localhost:' + Config.stream.port.http], (error, stdout, stderr) => {
+  if (error) {
+    throw error;
+  }
+  console.log(stdout);
+});*/
+
+/*const child = execFile('echo', ['hello'], (error, stdout, stderr) => {
+  if (error) {
+    throw error;
+  }
+  console.log(stdout);
+});*/
+
+
+//const ls = spawn('echo', ['ello']);
 
 websocket.on('connection', ws => {
 
-	//console.log(websocket.clients);
 	if(websocket.clients.lenght === Config.stream.maxClients){
 		console.log('[STREAM-WS] New video client, but the server is full. Kicking client.');
 		ws.terminate();
@@ -26,20 +41,8 @@ websocket.on('connection', ws => {
 		console.log('[STREAM-WS] New video client !');
 		console.log('[STREAM-WS] Address:' + ws.upgradeReq.socket.remoteAddress);
 		console.log('[STREAM-WS] Explorer:' + ws.upgradeReq.headers['user-agent']);
-		//nbClients++;
 	}
 });
-
-/*websocket.on('close', ws => {
-
-	console.log("JE ME CASSE VOUS ME FAITES CHIER !");
-
-});*/
-
-/*websocket.on('disconnection',function(){
-		console.log('[STREAM-WS] Client disconnected.');
-		nbClients--;
-});*/
 
 websocket.broadcast = function(data) {
 	websocket.clients.forEach(function each(client) {
