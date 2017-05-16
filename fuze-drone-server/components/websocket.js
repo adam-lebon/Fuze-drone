@@ -37,10 +37,12 @@ server.on('connection', ws => {
 
       case "startRecord":
         console.log("Start recording");
+        Config.stream.recording = true;
         break;
 
       case "stopRecord":
-        console.log("Stop record")
+        console.log("Stop record");
+        Config.stream.recording = false;
         break;
     }
 

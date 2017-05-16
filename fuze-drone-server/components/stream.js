@@ -63,8 +63,20 @@ function onRequest(request, reply) {
   // Quand on reçoit une trame vidéo
   request.on('data', data => {
   		websocket.broadcast(data);   // On l'envois sur le websocket
+			if (request.socket.recording) {
+				request.socket.recording.write(data);
+			}
   	});
 	request.on('end',function(){
 		console.log('[STREAM-HTTP] Stream connection closed'); // On affiche un message de déconnexion.
+		if (request.socket.recording) {
+			request.socket.recording.close();
+		}
 	});
+
+	// Record the stream to a local file?
+	if (Config.stream.recording) {
+		var path = '/home/pi/RECORDINGS-DRONE/' + Date.now() + '.ts';
+		request.socket.recording = fs.createWriteStream(path);
+	}
 }
