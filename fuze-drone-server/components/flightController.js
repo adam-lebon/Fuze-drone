@@ -94,6 +94,8 @@ console.log("TEST");
    }
 
    sendCommand(name, ...params){
+     if(!(this.port && this.port.isOpen())){ return true; }
+     
      if (name === "rc_channels_override") {
 
        //if(this.security) { clearTimeout(this.security); }
