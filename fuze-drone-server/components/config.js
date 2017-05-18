@@ -7,7 +7,6 @@ export const Config = {
       websocket: 7778,
       http: 8080
     },
-    recording: false,
     maxClients: 1
   }
 };

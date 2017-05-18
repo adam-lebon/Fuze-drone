@@ -31,6 +31,8 @@ console.log(`[GENERAL] Starting FFMPEG on the stream server:`);
 
 //const ls = spawn('echo', ['ello']);
 
+export var isRecording = false;
+
 websocket.on('connection', ws => {
 
 	if(websocket.clients.lenght === Config.stream.maxClients){
@@ -75,7 +77,7 @@ function onRequest(request, reply) {
 	});
 
 	// Record the stream to a local file?
-	if (Config.stream.recording) {
+	if (isRecording) {
 		var path = '/home/pi/RECORDINGS-DRONE/' + Date.now() + '.ts';
 		request.socket.recording = fs.createWriteStream(path);
 	}

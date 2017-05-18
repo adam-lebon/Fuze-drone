@@ -1,6 +1,7 @@
 import { Config } from './config';
 import { Server } from 'ws';
 import { flightController } from './FlightController';
+import { isRecording } from './stream';
 
 console.log(`Starting websocket server on port: ${Config.websocket.port}`);
 
@@ -47,11 +48,12 @@ server.on('connection', ws => {
 
       case "startRecord":
         console.log("Start recording");
+        isRecording = true;
         break;
 
       case "stopRecord":
         console.log("Stop record");
-        Config.stream.recording = false;
+        isRecording = false;
         break;
     }
 
