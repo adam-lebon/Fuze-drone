@@ -47,11 +47,11 @@ server.on('connection', ws => {
 
       case "startRecord":
         console.log("Start recording");
-        Config.
         break;
 
       case "stopRecord":
         console.log("Stop record");
+        Config.stream.recording = false;
         break;
     }
 
