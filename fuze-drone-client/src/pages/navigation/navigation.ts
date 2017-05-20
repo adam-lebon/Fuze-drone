@@ -22,6 +22,12 @@ export class NavigationPage implements OnInit, OnDestroy {
 
   ngOnInit(){
     this.joystickSocket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
+    this.joystickSocket.onmessage = event => {
+      if(JSON.parse(event.data).command == 'ping'){
+        this.joystickSocket.send('{ "command": "pong" }');
+      }
+    };
+
     if(this.platform.is('mobile')) {
       StatusBar.hide();
     }
@@ -33,14 +39,19 @@ export class NavigationPage implements OnInit, OnDestroy {
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
     }).on('move', (evt, data) => {
-      console.log(Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500));
+      let x = (data.instance.frontPosition.x*2)/this.configService.config.tailleJoystick;
+      let y = (-data.instance.frontPosition.y*2)/this.configService.config.tailleJoystick;
+
       let leftJoystick = {
         command: "leftJoystick" ,
         data: {
-          x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
-          y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+          x: Math.round(1500+400*(0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2))),
+          y: Math.round(1500+400*(0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2)))
         }
       };
+      console.log(leftJoystick.data.x);
+      console.log(leftJoystick.data.y);
+
       if(this.joystickSocket.readyState == 1){
         this.joystickSocket.send(JSON.stringify(leftJoystick));
       }
@@ -63,12 +74,14 @@ export class NavigationPage implements OnInit, OnDestroy {
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
     }).on('move', (evt, data) => {
+      let x = (data.instance.frontPosition.x*2)/this.configService.config.tailleJoystick;
+      let y = (-data.instance.frontPosition.y*2)/this.configService.config.tailleJoystick;
 
       let rightJoystick = {
         command: "rightJoystick" ,
         data: {
-          x: Math.round(1500+(data.instance.frontPosition.x*2/(this.configService.config.tailleJoystick))*500) ,
-          y: Math.round(1500+(data.instance.frontPosition.y*2/(this.configService.config.tailleJoystick))*500)
+          x: Math.round(1500+400*(0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2))),
+          y: Math.round(1500+400*(0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2)))
         }
       };
       if(this.joystickSocket.readyState == 1){
@@ -117,7 +130,7 @@ export class NavigationPage implements OnInit, OnDestroy {
   }
   toggleArm(){
     if(this.joystickSocket.readyState == 1){
-      if(this.isArming){
+      if(!this.isArming){
         this.joystickSocket.send(JSON.stringify({ command: "mavlinkCommand", data: { name: "command_long", params: [400,0,1]} }));
         this.isArming = true;
       }else{
