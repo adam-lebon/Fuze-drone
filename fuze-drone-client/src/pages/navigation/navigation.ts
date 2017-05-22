@@ -11,12 +11,12 @@ import { ConfigService } from '../../services/config.service';
 })
 
 export class NavigationPage implements OnInit, OnDestroy {
+  videoPlayer:any;
   joystickSocket:WebSocket;
   joystickLeft:any;
   joystickRight:any;
   isRecording:Boolean;
   isKilling:Boolean;
-  isArming:Boolean;
 
   constructor(private platform:Platform , private configService: ConfigService) { }
 
@@ -98,17 +98,19 @@ export class NavigationPage implements OnInit, OnDestroy {
         }));
       }
     });;
-    new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
+    this.videoPlayer = new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
   }
 
   ngOnDestroy(){
     if(this.platform.is('mobile')) {
       StatusBar.show();
     }
+    this.joystickSocket.close();
+    this.videoPlayer.destroy();
   }
   toggleHornets(){
     if(this.joystickSocket.readyState == 1){
-      if(this.isKilling){
+      if(this.isKilling == false){
         this.joystickSocket.send(JSON.stringify({ command: "stopKillingHornets" }));
         this.isKilling = true;
       }else{
@@ -119,7 +121,7 @@ export class NavigationPage implements OnInit, OnDestroy {
   }
   toggleRecord(){
     if(this.joystickSocket.readyState == 1){
-      if(this.isRecording){
+      if(this.isRecording == false){
         this.joystickSocket.send(JSON.stringify({ command: "stopRecord" }));
         this.isRecording = true;
       }else{
@@ -128,15 +130,5 @@ export class NavigationPage implements OnInit, OnDestroy {
       }
     }
   }
-  toggleArm(){
-    if(this.joystickSocket.readyState == 1){
-      if(!this.isArming){
-        this.joystickSocket.send(JSON.stringify({ command: "mavlinkCommand", data: { name: "command_long", params: [400,0,1]} }));
-        this.isArming = true;
-      }else{
-        this.joystickSocket.send(JSON.stringify({ command: "mavlinkCommand", data: { name: "command_long", params: [400,0,0]} }));
-        this.isArming = false;
-      }
-    }
-  }
+
 }
