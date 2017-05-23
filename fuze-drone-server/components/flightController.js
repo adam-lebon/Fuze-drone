@@ -91,6 +91,8 @@ console.log("TEST");
        };
        console.log('Reception des valeurs: '+ JSON.stringify(this.values.rcChannelsRaw));
      });
+
+     this.mavlinkParser.on('STATUSTEXT', message => { console.log(message.text); websocket.broadcast(JSON.stringify({ message: "STATUSTEXT", data: { text: message.text }})); } );
    }
 
    sendCommand(name, ...params){
