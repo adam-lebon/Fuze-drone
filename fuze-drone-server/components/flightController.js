@@ -30,7 +30,7 @@ console.log("TEST");
 
          if (port.pnpId && port.pnpId.includes('PX4')) {
            console.log(`Found flight controller on port ${port.comName}`);
-           initSerialPort(port.comName);
+           this.initSerialPort(port.comName);
          }
          console.log('---');
        });
@@ -89,7 +89,7 @@ console.log("TEST");
          "chan7_raw": message.chan7_raw,
          "chan8_raw": message.chan8_raw,
        };
-       console.log('Reception des valeurs: '+ JSON.stringify(this.values.rcChannelsRaw));
+       //console.log('Reception des valeurs: '+ JSON.stringify(this.values.rcChannelsRaw));
      });
 
      this.mavlinkParser.on('STATUSTEXT', message => { console.log(message.text); websocket.broadcast(JSON.stringify({ message: "STATUSTEXT", data: { text: message.text }})); } );

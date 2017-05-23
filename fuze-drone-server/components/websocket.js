@@ -1,7 +1,7 @@
 import { Config } from './config';
 import { Server } from 'ws';
-import { flightController } from './FlightController';
-import { isRecording } from './stream';
+import { flightController } from './flightController';
+import { setRecordingState } from './stream';
 
 console.log(`Starting websocket server on port: ${Config.websocket.port}`);
 
@@ -17,10 +17,10 @@ server.on('connection', ws => {
 
   console.log('New client !');
 
-  ws.security = setInterval(() => {
+  /*ws.security = setInterval(() => {
     ws.send('{ "command": "ping" }');
     setTimeout(() => { if(Date.getMilliseconds() - ws.lastMessage > 1000){ ws.close(); } }, 1000)
-  }, 5000);
+  }, 5000);*/
 
   ws.on('message', message => {
     console.log(message);
@@ -48,12 +48,12 @@ server.on('connection', ws => {
 
       case "startRecord":
         console.log("Start recording");
-        isRecording = true;
+        setRecordingState(true);
         break;
 
       case "stopRecord":
         console.log("Stop record");
-        isRecording = false;
+        setRecordingState(false)
         break;
     }
 
