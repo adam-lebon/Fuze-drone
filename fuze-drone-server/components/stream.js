@@ -1,8 +1,11 @@
 import { Config } from './config';
-import { Server } from 'ws';
+import WebSocket from 'ws';
 import Http from 'http';
-import spawn from 'child_process';
-//import execFile from 'child_process';
+import { spawn } from 'child_process';
+import fs from 'fs';
+
+var isRecording = false;
+var recording = null;
 
 console.log(`[GENERAL] Starting stream server on port: ${Config.stream.port.http}`);
 
@@ -10,28 +13,21 @@ const server = new Http.createServer(onRequest).listen(Config.stream.port.http);
 
 console.log(`[GENERAL] Starting websocket stream server on port: ${Config.stream.port.websocket} `);
 
-const websocket = new Server({ port: Config.stream.port.websocket});
+const websocket = new WebSocket.Server({ port: Config.stream.port.websocket});
 
 console.log(`[GENERAL] Starting FFMPEG on the stream server:`);
 
-/*const child = execFile('ffmpeg', ['v4l2 -video_size 640x480 -i /dev/video0 -vcodec mpeg1video -threads 4 -f mpegts http://localhost:' + Config.stream.port.http], (error, stdout, stderr) => {
-  if (error) {
-    throw error;
+const child = spawn('ffmpeg', ('-f v4l2 -video_size 640x480 -i /dev/video0 -vcodec mpeg1video -threads 4 -f mpegts http://localhost:' + Config.stream.port.http).split(" "));
+
+export function setRecordingState(status){
+  isRecording = status;
+  if(status == false){
+    var path = '/home/pi/Videos/DRONE-' + Date.now() + '.ts';
+    recording = fs.createWriteStream(path);
   }
-  console.log(stdout);
-});*/
-
-/*const child = execFile('echo', ['hello'], (error, stdout, stderr) => {
-  if (error) {
-    throw error;
-  }
-  console.log(stdout);
-});*/
+};
 
 
-//const ls = spawn('echo', ['ello']);
-
-export var isRecording = false;
 
 websocket.on('connection', ws => {
 
@@ -48,7 +44,7 @@ websocket.on('connection', ws => {
 
 websocket.broadcast = function(data) {
 	websocket.clients.forEach(function each(client) {
-			if (client.readyState === websocket.OPEN) {
+			if (client.readyState === WebSocket.OPEN) {
         client.send(data);
       }
 	});
@@ -65,20 +61,16 @@ function onRequest(request, reply) {
   // Quand on reçoit une trame vidéo
   request.on('data', data => {
   		websocket.broadcast(data);   // On l'envois sur le websocket
-			if (request.socket.recording) {
-				request.socket.recording.write(data);
+			if (isRecording) {
+				recording.write(data);
 			}
   	});
 	request.on('end',function(){
 		console.log('[STREAM-HTTP] Stream connection closed'); // On affiche un message de déconnexion.
-		if (request.socket.recording) {
-			request.socket.recording.close();
+		if (isRecording && recording != null) {
+			recording.close();
+      recording = null;
 		}
 	});
 
-	// Record the stream to a local file?
-	if (isRecording) {
-		var path = '/home/pi/RECORDINGS-DRONE/' + Date.now() + '.ts';
-		request.socket.recording = fs.createWriteStream(path);
-	}
 }
