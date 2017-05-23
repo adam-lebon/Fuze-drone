@@ -71,7 +71,7 @@ console.log("TEST");
            //console.log(message);
            //message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
          });
-         this.sendCommand('rc_channels_override', 1600, 1650, 1700, 1750);
+         //this.sendCommand('rc_channels_override', 1600, 1650, 1700, 1750);
          //this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1));
        } , 1000);
      });
