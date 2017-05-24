@@ -12,6 +12,7 @@ console.log("TEST");
        "RC_CHANNELS_RAW": {}
      };
      this.port = null;
+     this.security = null;
      this.mavlinkParser = new mavlink(undefined, 255);
 
      this.initListeners();
@@ -29,7 +30,7 @@ console.log("TEST");
 
          if (port.pnpId && port.pnpId.includes('PX4')) {
            console.log(`Found flight controller on port ${port.comName}`);
-           initSerialPort(port.comName);
+           this.initSerialPort(port.comName);
          }
          console.log('---');
        });
@@ -64,8 +65,15 @@ console.log("TEST");
        });
 
        this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_RC_CHANNELS, 255, 1));
-       this.overrideRc([1000, 1500, 1500, 1500, 0, 0, 0, 0]);
-       setTimeout(() => this.overrideRc([1000, 2000, 1500, 1500]), 6000);
+       //this.overrideRc([1000, 1500, 1500, 1500, 0, 0, 0, 0]);
+       setTimeout(() => {
+         this.mavlinkParser.on('message', message => {
+           //console.log(message);
+           //message.fieldnames.forEach( fieldname => console.log(`${fieldname}: ${message[fieldname]}`) );
+         });
+         //this.sendCommand('rc_channels_override', 1600, 1650, 1700, 1750);
+         //this.mavlinkParser.send(new mavlink.messages.command_long(1, 1, 400, 0, 1));
+       } , 1000);
      });
    }
 
@@ -81,13 +89,23 @@ console.log("TEST");
          "chan7_raw": message.chan7_raw,
          "chan8_raw": message.chan8_raw,
        };
-       console.log(this.values.rcChannelsRaw);
+       //console.log('Reception des valeurs: '+ JSON.stringify(this.values.rcChannelsRaw));
      });
+
+     this.mavlinkParser.on('STATUSTEXT', message => { console.log(message.text); websocket.broadcast(JSON.stringify({ message: "STATUSTEXT", data: { text: message.text }})); } );
    }
 
-   overrideRc(rcChannels){
-     //console.log(rcChannels);
-     this.mavlinkParser.send(new mavlink.messages.rc_channels_override(1, 1, ...rcChannels));
+   sendCommand(name, ...params){
+     if(!(this.port && this.port.isOpen())){ return true; }
+     
+     if (name === "rc_channels_override") {
+
+       //if(this.security) { clearTimeout(this.security); }
+
+       //security = setTimeout(() => this.sendCommand("rc_channels_override", 0, 0, 0, 0, 0, 0, 0, 0), 1000);
+     }
+     console.log('Envoie de valeurs de test: ' + params);
+     this.mavlinkParser.send(new mavlink.messages[name](1, 1, ...params));
    }
  }
 
