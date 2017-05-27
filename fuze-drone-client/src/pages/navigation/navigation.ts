@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform } from 'ionic-angular';
-import { StatusBar } from 'ionic-native';
+import { StatusBar } from '@ionic-native/status-bar';
 import { JSMpeg } from  './jsmpeg.js';
 import * as nipplejs from 'nipplejs';
 import { ConfigService } from '../../services/config.service';
@@ -18,18 +18,20 @@ export class NavigationPage implements OnInit, OnDestroy {
   isRecording:Boolean;
   isKilling:Boolean;
 
-  constructor(private platform:Platform , private configService: ConfigService) { }
+  constructor(
+    private platform: Platform,
+    private statusBar: StatusBar,
+    private configService: ConfigService
+  ) { }
 
   ngOnInit(){
     this.joystickSocket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
-    this.joystickSocket.onmessage = event => {
-      if(JSON.parse(event.data).command == 'ping'){
-        this.joystickSocket.send('{ "command": "pong" }');
-      }
+    this.joystickSocket.onmessage = function(event) {
+      console.log(event);
     };
 
     if(this.platform.is('mobile')) {
-      StatusBar.hide();
+      this.statusBar.hide();
     }
 
     this.joystickLeft = nipplejs.create({
@@ -103,10 +105,37 @@ export class NavigationPage implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     if(this.platform.is('mobile')) {
-      StatusBar.show();
+      this.statusBar.show();
     }
     this.joystickSocket.close();
     this.videoPlayer.destroy();
+  }
+
+  loiterMode(){
+    this.joystickSocket.send(JSON.stringify({
+      command: "changeMode",
+      data: {
+        pwm: 1300
+      }
+    }));
+  }
+
+  altHoldMode(){
+    this.joystickSocket.send(JSON.stringify({
+      command: "changeMode",
+      data: {
+        pwm: 500
+      }
+    }));
+  }
+
+  autotuneMode(){
+    this.joystickSocket.send(JSON.stringify({
+      command: "changeMode",
+      data: {
+        pwm: 1400
+      }
+    }));
   }
   toggleHornets(){
     if(this.joystickSocket.readyState == 1){

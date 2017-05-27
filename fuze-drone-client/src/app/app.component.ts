@@ -1,6 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { Platform, MenuController, Nav } from 'ionic-angular';
-import { StatusBar, Splashscreen } from 'ionic-native';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
+
 import { HomePage } from '../pages/home/home';
 import { NavigationPage } from '../pages/navigation/navigation';
 import { ParametresPage } from '../pages/parametres/parametres';
@@ -18,6 +20,8 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
+    public statusBar: StatusBar,
+    public splashScreen: SplashScreen,
     public menu: MenuController,
     public configService: ConfigService
   ) {
@@ -32,8 +36,8 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      StatusBar.styleDefault();
-      Splashscreen.hide();
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
     });
   }
 

@@ -2,6 +2,15 @@
   <ion-navbar>
     <ion-title>Navigation</ion-title>
     <ion-buttons right>
+      <button ion-button (click)="altHoldMode()" color="dark" outline>Alt Hold</button>
+    </ion-buttons>
+    <ion-buttons right>
+      <button ion-button (click)="loiterMode()" color="dark" outline>Loiter</button>
+    </ion-buttons>
+    <ion-buttons right>
+      <button ion-button (click)="autotuneMode()" color="dark" outline>AutoTune</button>
+    </ion-buttons>
+    <ion-buttons right>
         <ion-label >Record</ion-label>
         <ion-toggle (ionChange)="toggleRecord()" name="camera" value="false"></ion-toggle>
       </ion-buttons>

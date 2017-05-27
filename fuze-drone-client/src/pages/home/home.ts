@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform } from 'ionic-angular';
-import { StatusBar } from 'ionic-native';
+import { StatusBar } from '@ionic-native/status-bar';
 import { NavigationPage } from '../navigation/navigation';
 import { ParametresPage } from '../parametres/parametres';
 import { InformationsPage } from '../informations/informations';
@@ -14,18 +14,20 @@ export class HomePage implements OnInit, OnDestroy {
   navigationPage:any = NavigationPage;
   parametresPage:any = ParametresPage;
   informationsPage:any = InformationsPage;
-  constructor(private platform:Platform) { }
 
-
+  constructor(
+    private statusBar: StatusBar,
+    private platform:Platform
+  ) { }
 
   ngOnInit(){
     if(this.platform.is('mobile')) {
-      StatusBar.show();
+      this.statusBar.show();
     }
   }
   ngOnDestroy(){
     if(this.platform.is('mobile')) {
-      StatusBar.hide();
+      this.statusBar.hide();
     }
   }
 }
