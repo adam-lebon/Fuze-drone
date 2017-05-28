@@ -1,8 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { JSMpeg } from  './jsmpeg.js';
 import * as nipplejs from 'nipplejs';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/merge';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/skipUntil';
 import { ConfigService } from '../../services/config.service';
 
 @Component({
@@ -18,17 +25,32 @@ export class NavigationPage implements OnInit, OnDestroy {
   isRecording:Boolean;
   isKilling:Boolean;
 
+  channelsStream:Observable<number[]>;
+  debugMessages:Observable<string>;
+
   constructor(
     private platform: Platform,
+    private toastController: ToastController,
     private statusBar: StatusBar,
     private configService: ConfigService
   ) { }
 
   ngOnInit(){
     this.joystickSocket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
-    this.joystickSocket.onmessage = function(event) {
-      console.log(event);
-    };
+    this.toastController.create({
+      message: 'fsdj',
+      duration: 1500,
+      position: 'bottom'
+    })
+    Observable.fromEvent(this.joystickSocket, 'message')
+      .map((message:any) => JSON.parse(message.data))
+      .filter(message => message.command === "STATUSTEXT")
+      .map(message => message.data.text)
+      .subscribe(message => this.toastController.create({
+        message,
+        duration: 1500,
+        position: 'bottom'
+      }).present());
 
     if(this.platform.is('mobile')) {
       this.statusBar.hide();
@@ -40,33 +62,6 @@ export class NavigationPage implements OnInit, OnDestroy {
       mode: this.configService.config.modeJoystick,
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
-    }).on('move', (evt, data) => {
-      let x = (data.instance.frontPosition.x*2)/this.configService.config.tailleJoystick;
-      let y = (-data.instance.frontPosition.y*2)/this.configService.config.tailleJoystick;
-
-      let leftJoystick = {
-        command: "leftJoystick" ,
-        data: {
-          x: Math.round(1500+500*(0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2))),
-          y: Math.round(1500+500*(0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2)))
-        }
-      };
-      console.log(leftJoystick.data.x);
-      console.log(leftJoystick.data.y);
-
-      if(this.joystickSocket.readyState == 1){
-        this.joystickSocket.send(JSON.stringify(leftJoystick));
-      }
-    }).on('end', () => {
-      if(this.joystickSocket.readyState == 1){
-        this.joystickSocket.send(JSON.stringify({
-          command: "leftJoystick" ,
-          data: {
-            x: 1500,
-            y: 1500
-          }
-        }));
-      }
     });
 
     this.joystickRight = nipplejs.create({
@@ -75,31 +70,37 @@ export class NavigationPage implements OnInit, OnDestroy {
       mode: this.configService.config.modeJoystick,
       size:(this.configService.config.tailleJoystick),
       catchDistance: (((this.configService.config.tailleJoystick))/2)
-    }).on('move', (evt, data) => {
-      let x = (data.instance.frontPosition.x*2)/this.configService.config.tailleJoystick;
-      let y = (-data.instance.frontPosition.y*2)/this.configService.config.tailleJoystick;
+    });
 
-      let rightJoystick = {
-        command: "rightJoystick" ,
-        data: {
-          x: Math.round(1500+400*(0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2))),
-          y: Math.round(1500+400*(0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2)))
+    Observable.combineLatest(
+      Observable.fromEvent(this.joystickLeft, 'move', (event, data) => data)
+        .map(data => data.instance.frontPosition)
+        .map(data => this.processCoords(data))
+        .startWith([ 1500, 1500 ])
+        .merge(Observable.fromEvent(this.joystickLeft, 'end')
+          .map(event => [ 1500, 1500 ])
+        ),
+
+      Observable.fromEvent(this.joystickRight, 'move', (event, data) => data)
+        .map(data => data.instance.frontPosition)
+        .map(data => this.processCoords(data))
+        .startWith([ 1500, 1500 ])
+        .merge(Observable.fromEvent(this.joystickRight, 'end')
+          .map(event => [ 1500, 1500 ])
+        )
+    )
+    .map(values => [].concat(...values))
+    .map(values => JSON.stringify(
+      { command: "mavlink",
+        data:{
+          cmdName: "rc_channels_override",
+          params: values
         }
-      };
-      if(this.joystickSocket.readyState == 1){
-        this.joystickSocket.send(JSON.stringify(rightJoystick));
       }
-    }).on('end', () => {
-      if(this.joystickSocket.readyState == 1){
-        this.joystickSocket.send(JSON.stringify({
-          command: "rightJoystick" ,
-          data: {
-            x: 1500,
-            y: 1500
-          }
-        }));
-      }
-    });;
+    ))
+    .skipUntil(Observable.fromEvent(this.joystickSocket, 'open'))
+    .subscribe(message => this.joystickSocket.send(message));
+
     this.videoPlayer = new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
   }
 
@@ -109,6 +110,15 @@ export class NavigationPage implements OnInit, OnDestroy {
     }
     this.joystickSocket.close();
     this.videoPlayer.destroy();
+  }
+
+  processCoords(coords): number[] {
+    let x = (coords.x*2)/this.configService.config.tailleJoystick;
+    let y = (-coords.y*2)/this.configService.config.tailleJoystick;
+    return [
+      0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2),
+      0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2)
+    ].map(value => Math.round(1500+500*value));
   }
 
   loiterMode(){
