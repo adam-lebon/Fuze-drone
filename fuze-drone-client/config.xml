@@ -4,7 +4,7 @@
     <description>This application allow you to control your drone made with our FuzeDrone Project</description>
     <author email="matteo.lecuit@laposte.net" href="https://github.com/reglisse44/Fuze-drone">The FuzeDrone Team</author>
     <icon src="resources/icon.png" />
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.1.93:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
