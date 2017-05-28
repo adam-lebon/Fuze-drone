@@ -40,5 +40,8 @@
   "devDependencies": {
     "nodemon": "^1.11.0",
     "ts-node": "^1.7.0"
+  },
+  "jshintConfig": {
+    "esversion": 6
   }
 }
