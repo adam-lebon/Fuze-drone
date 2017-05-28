@@ -1,28 +1,41 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Navigation</ion-title>
+    <ion-title></ion-title>
+    <ion-buttons left>
+      <ion-icon name="locate"></ion-icon><ion-badge>{{ (gpsStream | async)?.satellites_visible }}</ion-badge>
+    </ion-buttons>
+
     <ion-buttons right>
+      <button ion-button icon-only (click)="backgroundMode = 'map'" *ngIf="backgroundMode == 'video'" round>
+        <ion-icon name="map"></ion-icon>
+      </button>
+
+      <button ion-button icon-only (click)="backgroundMode = 'video'" *ngIf="backgroundMode == 'map'" round>
+        <ion-icon name="videocam"></ion-icon>
+      </button>
       <button ion-button (click)="altHoldMode()" color="dark" outline>Alt Hold</button>
     </ion-buttons>
+
     <ion-buttons right>
       <button ion-button (click)="loiterMode()" color="dark" outline>Loiter</button>
     </ion-buttons>
     <ion-buttons right>
       <button ion-button (click)="autotuneMode()" color="dark" outline>AutoTune</button>
     </ion-buttons>
-    <ion-buttons right>
+    <!--<ion-buttons right>
         <ion-label >Record</ion-label>
         <ion-toggle (ionChange)="toggleRecord()" name="camera" value="false"></ion-toggle>
       </ion-buttons>
       <ion-buttons right>
         <ion-label >Hornet</ion-label>
         <ion-toggle (ionChange)="toggleHornets()" name="hornet" value="false"></ion-toggle>
-      </ion-buttons>
+      </ion-buttons>-->
   </ion-navbar>
 </ion-header>
 
 <ion-content >
-  <canvas id="video"></canvas>
+  <canvas id="video" [hidden]="backgroundMode !== 'video'"></canvas>
+  <div id="map" [hidden]="backgroundMode !== 'map'"></div>
 
   <div id='joystickLeft'></div>
   <div id='joystickRight'></div>

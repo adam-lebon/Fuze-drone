@@ -1,67 +1,82 @@
 {
-  "name": "ionic-hello-world",
-  "author": "Ionic Framework",
-  "homepage": "http://ionicframework.com/",
-  "private": true,
-  "scripts": {
-    "clean": "ionic-app-scripts clean",
-    "build": "ionic-app-scripts build",
-    "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
-  },
-  "dependencies": {
-    "@angular/common": "4.1.2",
-    "@angular/compiler": "4.1.2",
-    "@angular/compiler-cli": "4.1.2",
-    "@angular/core": "4.1.2",
-    "@angular/forms": "4.1.2",
-    "@angular/http": "4.1.2",
-    "@angular/platform-browser": "4.1.2",
-    "@angular/platform-browser-dynamic": "4.1.2",
-    "@ionic-native/core": "3.10.2",
-    "@ionic-native/screen-orientation": "^3.10.3",
-    "@ionic-native/splash-screen": "^3.10.3",
-    "@ionic-native/status-bar": "^3.10.2",
-    "@ionic/storage": "2.0.1",
-    "cordova-plugin-screen-orientation": "^2.0.1",
-    "es6-promise-plugin": "git+https://github.com/vstirbu/PromisesPlugin.git",
-    "ionic-angular": "3.3.0",
-    "ionicons": "3.0.0",
-    "nipplejs": "^0.6.7",
-    "rxjs": "5.1.1",
-    "sw-toolbox": "3.4.0",
-    "zone.js": "^0.8.11"
-  },
-  "devDependencies": {
-    "@ionic/app-scripts": "1.3.7",
-    "@ionic/cli-plugin-cordova": "1.2.1",
-    "@ionic/cli-plugin-ionic-angular": "1.2.0",
-    "typescript": "^2.3.3"
-  },
-  "cordovaPlugins": [
-    "cordova-plugin-whitelist",
-    "cordova-plugin-console",
-    "cordova-plugin-statusbar",
-    "cordova-plugin-device",
-    "cordova-plugin-splashscreen",
-    "ionic-plugin-keyboard"
-  ],
-  "cordovaPlatforms": [],
-  "description": "fuze-drone-client: An Ionic project",
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-console": {},
-      "cordova-plugin-device": {},
-      "cordova-plugin-nativestorage": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-whitelist": {},
-      "cordova-sqlite-storage": {},
-      "ionic-plugin-keyboard": {},
-      "cordova-plugin-screen-orientation": {}
+    "name": "ionic-hello-world",
+    "author": "Ionic Framework",
+    "homepage": "http://ionicframework.com/",
+    "private": true,
+    "scripts": {
+        "clean": "ionic-app-scripts clean",
+        "build": "ionic-app-scripts build",
+        "ionic:build": "ionic-app-scripts build",
+        "ionic:serve": "ionic-app-scripts serve"
     },
-    "platforms": [
-      "android"
-    ]
-  }
+    "dependencies": {
+        "@angular/common": "4.1.2",
+        "@angular/compiler": "4.1.2",
+        "@angular/compiler-cli": "4.1.2",
+        "@angular/core": "4.1.2",
+        "@angular/forms": "4.1.2",
+        "@angular/http": "4.1.2",
+        "@angular/platform-browser": "4.1.2",
+        "@angular/platform-browser-dynamic": "4.1.2",
+        "@ionic-native/core": "3.10.2",
+        "@ionic-native/google-maps": "^3.10.3",
+        "@ionic-native/screen-orientation": "^3.10.3",
+        "@ionic-native/splash-screen": "^3.10.3",
+        "@ionic-native/status-bar": "^3.10.2",
+        "@ionic/storage": "2.0.1",
+        "cordova-android": "^6.2.3",
+        "cordova-plugin-console": "^1.0.5",
+        "cordova-plugin-device": "^1.1.4",
+        "cordova-plugin-googlemaps": "^1.4.0",
+        "cordova-plugin-nativestorage": "^2.2.2",
+        "cordova-plugin-screen-orientation": "^2.0.1",
+        "cordova-plugin-splashscreen": "^4.0.3",
+        "cordova-plugin-statusbar": "^2.2.3",
+        "cordova-plugin-whitelist": "^1.3.1",
+        "cordova-sqlite-storage": "^2.0.4",
+        "es6-promise-plugin": "git+https://github.com/vstirbu/PromisesPlugin.git",
+        "ionic-angular": "3.3.0",
+        "ionic-plugin-keyboard": "^2.2.1",
+        "ionicons": "3.0.0",
+        "nipplejs": "^0.6.7",
+        "rxjs": "5.1.1",
+        "sw-toolbox": "3.4.0",
+        "zone.js": "^0.8.11"
+    },
+    "devDependencies": {
+        "@ionic/app-scripts": "1.3.7",
+        "@ionic/cli-plugin-cordova": "1.2.1",
+        "@ionic/cli-plugin-ionic-angular": "1.2.0",
+        "typescript": "^2.3.3"
+    },
+    "cordovaPlugins": [
+        "cordova-plugin-whitelist",
+        "cordova-plugin-console",
+        "cordova-plugin-statusbar",
+        "cordova-plugin-device",
+        "cordova-plugin-splashscreen",
+        "ionic-plugin-keyboard"
+    ],
+    "cordovaPlatforms": [],
+    "description": "fuze-drone-client: An Ionic project",
+    "cordova": {
+        "plugins": {
+            "cordova-plugin-console": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-nativestorage": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-whitelist": {},
+            "cordova-sqlite-storage": {},
+            "ionic-plugin-keyboard": {},
+            "cordova-plugin-screen-orientation": {},
+            "cordova-plugin-googlemaps": {
+                "API_KEY_FOR_ANDROID": "AIzaSyD-fq8OYDXTrXHVtI0pzT7kMAvRtWseE2I",
+                "API_KEY_FOR_IOS": "AIzaSyBASt8krDYBoxHD9ZH1NuYLYEt08Uh9HBc"
+            }
+        },
+        "platforms": [
+            "android"
+        ]
+    }
 }

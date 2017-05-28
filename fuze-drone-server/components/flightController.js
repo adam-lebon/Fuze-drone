@@ -53,6 +53,7 @@ class FlightController {
       .subscribe(() => {
         console.log(`'[F.C.] \u2713 Serial port is open on port ${comName}`.green);
         this.mavlinkParser.setConnection(this.port);
+        this.mavlinkParser.send(new mavlink.messages.request_data_stream(1, 1, mavlink.MAV_DATA_STREAM_EXTENDED_STATUS, 255, 1));
       });
 
     Observable.fromEvent(this.port, 'data')
