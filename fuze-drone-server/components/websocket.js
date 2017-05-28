@@ -2,63 +2,27 @@ import { Config } from './config';
 import { Server } from 'ws';
 import { flightController } from './flightController';
 import { setRecordingState } from './stream';
+import 'colors';
 
-console.log(`Starting websocket server on port: ${Config.websocket.port}`);
+var websocket;
 
-const server = new Server({ port: Config.websocket.port });
+try{
+  websocket = new Server({ port: Config.websocket.port });
+  console.log(`[WEBSOCKET] \u2713 Websocket is started on port ${Config.websocket.port}`.green);
 
+}catch(err){
+  console.log(`[WEBSOCKET] Error: ${err.message}`.bgRed);
 
+}finally{
+  websocket.broadcast = function(data){
+    websocket.clients.forEach(client => client.send(data));
+  }
+  
+  websocket.on('connection', ws => {
 
-//console.log(`Error starting websocket: ${e}`);
-
-var channels = [ 0, 0, 0, 0 ];
-
-server.on('connection', ws => {
-
-  console.log('New client !');
-
-  /*ws.security = setInterval(() => {
-    ws.send('{ "command": "ping" }');
-    setTimeout(() => { if(Date.getMilliseconds() - ws.lastMessage > 1000){ ws.close(); } }, 1000)
-  }, 5000);*/
-
-  ws.on('message', message => {
-    console.log(message);
-    let parsed = JSON.parse(message);
-    switch (parsed.command) {
-      case "pong":
-        console.log("pong");
-        ws.lastMessage = Date.getMilliseconds();
-        break;
-      case "leftJoystick":
-        channels[1] = parsed.data.x;
-        channels[0] = parsed.data.y;
-        flightController.sendCommand('rc_channels_override', ...channels);
-        break;
-
-      case "rightJoystick":
-        channels[3] = parsed.data.x;
-        channels[2] = parsed.data.y;
-        flightController.sendCommand('rc_channels_override', ...channels);
-        break;
-
-      case "mavlinkCommand":
-        flightController.sendCommand(message.data.cmdName, ...message.data.params);
-        break;
-
-      case "startRecord":
-        console.log("Start recording");
-        setRecordingState(true);
-        break;
-
-      case "stopRecord":
-        console.log("Stop record");
-        setRecordingState(false)
-        break;
-    }
+    console.log('New client !');
 
   });
-});
-//.on('close', () => { console.log('closed'); flightController.sendCommand("rc_channels_override", 0, 0, 0, 0)} );
+}
 
-export { server };
+export { websocket };
