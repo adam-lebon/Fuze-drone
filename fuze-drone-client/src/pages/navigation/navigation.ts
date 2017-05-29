@@ -155,7 +155,7 @@ export class NavigationPage implements OnInit, OnDestroy {
     /******************************* GPS POSITION *****************************************/
     let mapStream: Observable<GoogleMap> = Observable.of(this.googleMaps.create(document.getElementById('map'))); // Emit the googleMap instance
     let mapReadyStream = mapStream.mergeMap(map => Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)));   // Emit the mapReady event
-
+    
     mapStream
       .mergeMap(map => { map.setClickable(false); return Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)) })  // Waiting the map to be ready
       .withLatestFrom(mapStream, (dummyEvent:any, map:GoogleMap) => map)                                                // Keep only the map (not the ready event)
