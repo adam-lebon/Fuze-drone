@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Platform, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, LatLng, CameraPosition, MarkerOptions, Marker } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapsEvent, LatLng, Marker } from '@ionic-native/google-maps';
 import { JSMpeg } from  './jsmpeg.js';
 import * as nipplejs from 'nipplejs';
 import { Observable } from 'rxjs/Observable';
@@ -150,8 +150,9 @@ export class NavigationPage implements OnInit, OnDestroy {
 
   ngAfterViewInit(){
     /******************************* GPS POSITION *****************************************/
-    let mapStream = Observable.of(this.googleMaps.create(document.getElementById('map')));
-
+    let mapStream: Observable<GoogleMap> = Observable.of(this.googleMaps.create(document.getElementById('map'))); // Emit the googleMap instance
+    let mapReadyStream = mapStream.mergeMap(map => Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)));   // Emit the mapReady event
+    
     mapStream
       .mergeMap(map => { map.setClickable(false); return Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)) })  // Waiting the map to be ready
       .withLatestFrom(mapStream, (dummyEvent:any, map:GoogleMap) => map)                                                // Keep only the map (not the ready event)

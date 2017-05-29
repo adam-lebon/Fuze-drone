@@ -2,25 +2,41 @@ import { Injectable, Inject } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/takeUntil';
 
 import { ConfigService } from './config.service';
 
 @Injectable()
-//@Inject(ConfigService)
 export class WebsocketService {
-  socket: WebSocket;
+  socket: Subject<WebSocket> = new Subject();
+  readyStream: Observable<any>;
   stream: Observable<any>;
   emitter: Subject<Object>;
 
   constructor(private configService: ConfigService){
-    this.socket = new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/");
+    this.readyStream = this.socket
+      .mergeMap(socket => Observable.fromEvent(socket, 'open'));
 
-    this.stream = Observable.fromEvent(this.socket, 'message')  // When a ws message is received
+    let autoReconnect = this.socket
+      .mergeMap(socket => Observable.fromEvent(socket, 'close'))
+      .mergeMap(event => Observable.interval(5000))
+      .takeUntil(this.readyStream)
+      .subscribe(x => { this.connectWebsocket(); console.log(x); });
+
+    this.stream = this.socket
+      .mergeMap(socket => Observable.fromEvent(socket, 'message'))  // When a ws message is received
       .map((message:any) => JSON.parse(message.data))                 // Parse the JSON message
 
     this.emitter = new Subject();
     this.emitter
-      .skipUntil(Observable.fromEvent(this.socket, 'open'))     // Check if the websocket is open
-      .subscribe(message => this.socket.send(message));
+      .skipUntil(this.readyStream)     // Check if the websocket is open
+      .withLatestFrom(this.socket, (message, socket) => ({message, socket}))
+      .subscribe(({ message, socket }) => socket.send(message));
+    this.connectWebsocket();
+  }
+
+  connectWebsocket(){
+    this.socket.next(new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/"));
   }
 }
