@@ -4,6 +4,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { NavigationPage } from '../navigation/navigation';
 import { ParametresPage } from '../parametres/parametres';
 import { InformationsPage } from '../informations/informations';
+import { WebsocketService } from '../../services/websocket.service';
 
 @Component({
   selector: 'home',
@@ -17,7 +18,8 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private statusBar: StatusBar,
-    private platform:Platform
+    private platform:Platform,
+    private websocketService: WebsocketService
   ) { }
 
   ngOnInit(){

@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { Platform, MenuController, Nav } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -20,6 +22,7 @@ export class MyApp {
 
   constructor(
     public platform: Platform,
+    public storage: Storage,
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
     public menu: MenuController,
@@ -35,7 +38,10 @@ export class MyApp {
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
+    Observable.merge(
+      Observable.fromPromise(this.platform.ready()),
+      Observable.fromPromise(this.storage.ready())
+    ).subscribe(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });

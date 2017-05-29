@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 
 class FlightController {
   constructor(){
-    this.defaultPortId = 0;
+    //this.defaultPortId = 0;
     this.port = null;
     this.security = null;
     this.mavlinkParser = new mavlink(undefined, 255);

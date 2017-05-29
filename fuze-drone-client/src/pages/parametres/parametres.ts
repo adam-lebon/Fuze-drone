@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { ToastController } from 'ionic-angular';
 import { ConfigService } from '../../services/config.service';
 
