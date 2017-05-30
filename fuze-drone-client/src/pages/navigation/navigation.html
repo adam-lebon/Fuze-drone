@@ -34,7 +34,8 @@
 </ion-header>
 
 <ion-content >
-  <canvas id="video" [hidden]="backgroundMode !== 'video'"></canvas>
+
+  <canvas id="video" [hidden]="backgroundMode != 'video'"></canvas>
   <div id="map" [hidden]="backgroundMode !== 'map'"></div>
 
   <div id='joystickLeft'></div>

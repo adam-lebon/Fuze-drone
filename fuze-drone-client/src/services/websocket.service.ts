@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
+import 'rxjs/add/operator/skipUntil';
 
 import { ConfigService } from './config.service';
 
@@ -43,6 +44,7 @@ export class WebsocketService {
 
   connectWebsocket(){
     console.log(this.configService);
-    this.socket.next(new WebSocket("ws://"+ this.configService.config.ipAdress +":7777/"));
+    this.configService.config
+      .subscribe((config:any) => this.socket.next(new WebSocket("ws://"+ config.ipAdress +":7777/")));
   }
 }

@@ -4,6 +4,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { GoogleMaps, GoogleMap, GoogleMapsEvent, LatLng, Marker } from '@ionic-native/google-maps';
 import { JSMpeg } from  './jsmpeg.js';
 import * as nipplejs from 'nipplejs';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/fromPromise';
@@ -30,8 +32,8 @@ import { WebsocketService } from '../../services/websocket.service';
 
 export class NavigationPage implements OnInit, OnDestroy {
   isAlive:boolean;
-  joystickLeft:any;
-  joystickRight:any;
+  joystickLeft:ReplaySubject<any> = new ReplaySubject(1);
+  joystickRight:ReplaySubject<any> = new ReplaySubject(1);
   videoPlayer:any;
 
   map: GoogleMap;
@@ -44,6 +46,7 @@ export class NavigationPage implements OnInit, OnDestroy {
 
   // Observables
   channelsStream:Observable<number[]>; // See JOTSICKS STREAM section
+  modeChannel:BehaviorSubject<number> = new BehaviorSubject(0);
   debugMessages:Observable<string>;    // See DEBUG MESSAGES section
   gpsStream: Observable<number>;        // See SAT COUNT section
 
@@ -64,24 +67,29 @@ export class NavigationPage implements OnInit, OnDestroy {
       this.statusBar.hide();
     }
 
+    this.configService.config.subscribe((config:any) =>
+      this.videoPlayer = new JSMpeg.Player('ws://'+ config.ipAdress +':7778/', {canvas: document.getElementById('video') })
+    );
     // Init the video player
-    this.videoPlayer = new JSMpeg.Player('ws://'+ this.configService.config.ipAdress +':7778/', {canvas: document.getElementById('video') });
 
     /******** JOYSTICKS INITIALISATION ***********/
-    this.joystickLeft = nipplejs.create({
-      zone: document.getElementById('joystickLeft'),
-      color: this.configService.config.couleurGaucheJoystick ,
-      mode: this.configService.config.modeJoystick,
-      size:(this.configService.config.tailleJoystick),
-      catchDistance: (((this.configService.config.tailleJoystick))/2)
-    });
+    this.configService.config.subscribe((config:any) => {
+      console.log("BONJOUE! ");
+      this.joystickLeft.next(nipplejs.create({
+        zone: document.getElementById('joystickLeft'),
+        color: config.couleurGaucheJoystick ,
+        mode: config.modeJoystick,
+        size:(config.tailleJoystick),
+        catchDistance: (((config.tailleJoystick))/2)
+      }));
 
-    this.joystickRight = nipplejs.create({
-      zone: document.getElementById('joystickRight'),
-      color: this.configService.config.couleurDroiteJoystick,
-      mode: this.configService.config.modeJoystick,
-      size:(this.configService.config.tailleJoystick),
-      catchDistance: (((this.configService.config.tailleJoystick))/2)
+      this.joystickRight.next(nipplejs.create({
+        zone: document.getElementById('joystickRight'),
+        color: config.couleurDroiteJoystick,
+        mode: config.modeJoystick,
+        size:(config.tailleJoystick),
+        catchDistance: (((config.tailleJoystick))/2)
+      }));
     });
     /******** END JOYSTICKS INITIALISATION ***********/
 
@@ -111,25 +119,28 @@ export class NavigationPage implements OnInit, OnDestroy {
       Emit an array with the latest values emitted by the two joysticks
       between a range of 1000-2000 (1500 is the center) [ yLeftValue , xLeftValue, yRightValue, xRightValue ]
       (ex: [ 1500, 1500, 1300, 1800 ] = dont touching the left joy. but is moving the right joy.) */
-    let joysticksStream = Observable.combineLatest(          // Combine latest event emitted by the two joysticks
 
-      Observable.fromEvent(this.joystickLeft, 'move', (event, data) => data)  // We dont care about event we just want the data
+    let joysticksStream = Observable.combineLatest(          // Combine latest event emitted by the two joysticks
+      this.joystickLeft
+      .mergeMap(joystick => Observable.fromEvent(joystick, 'move', (event, data) => data))  // We dont care about event we just want the data
       .map(data => data.instance.frontPosition)              // Keep only the relative coord
-      .map(data => this.processCoords(data))                 // Parse coord to rc range (see processCoords function)
+      .mergeMap(data => this.processCoords(data))                 // Parse coord to rc range (see processCoords function)
       .startWith([ 1500, 1500 ])                             // Start with neutral values
-      .merge(Observable.fromEvent(this.joystickLeft, 'end')  // Emit neutral values when release the jotystick (it will keep old value otherwise)
+      .merge(this.joystickLeft.mergeMap(joystick => Observable.fromEvent(joystick, 'end'))  // Emit neutral values when release the jotystick (it will keep old value otherwise)
         .map(() => [ 1500, 1500 ])
       ),
 
-    Observable.fromEvent(this.joystickRight, 'move', (event, data) => data) // Same as above but for the right joystick
+      this.joystickRight
+      .mergeMap(joystick => Observable.fromEvent(joystick, 'move', (event, data) => data)) // Same as above but for the right joystick
       .map(data => data.instance.frontPosition)
-      .map(data => this.processCoords(data))
+      .mergeMap(data => this.processCoords(data))
       .startWith([ 1500, 1500 ])
-      .merge(Observable.fromEvent(this.joystickRight, 'end')
+      .merge(this.joystickRight.mergeMap(joystick => Observable.fromEvent(joystick, 'end'))
         .map(event => [ 1500, 1500 ])
-      )
+      ),
 
-    ).map(values => [].concat(...values)); // Merge the two peers of values (ex: [[1500, 1500], [1500, 1500]] => [1500, 1500, 1500, 1500])
+      (joystickLeft, joystickRight) => joystickLeft.concat(joystickRight)
+    ); // Merge the two peers of values (ex: [[1500, 1500], [1500, 1500]] => [1500, 1500, 1500, 1500])
     /************ END JOYSTICKS STREAM **************************/
 
     /************ SEND JOYSTICKS COMMANDS *******************
@@ -138,6 +149,12 @@ export class NavigationPage implements OnInit, OnDestroy {
         it sends neutral values: [ 1500, 1500, 1500, 1500 ] every 500ms
     */
     joysticksStream    // Emit when the user is moving the joystick
+    .merge(joysticksStream  // Re-emit last value to avoid to trigger server side security
+          .bufferTime(500)              // Get the last 500 ms values
+          .filter(x => x.length == 0)   // Only if the user isn't moving any joysticks
+          .withLatestFrom(joysticksStream, (x, joysticks) => joysticks) // Re-emit the lastest values
+    )
+    .combineLatest(this.modeChannel, (channels, modeChannel) => channels.concat(modeChannel))
     .map(values => JSON.stringify(  // Wrap the message and stringify it
       { command: "mavlink",
         data:{
@@ -146,7 +163,7 @@ export class NavigationPage implements OnInit, OnDestroy {
         }
       }
     ))
-    .takeWhile(() => this.isAlive)                                    // Check if the page is leaved (auto unsubscribe)
+    .takeWhile(() => this.isAlive)    // Check if the page is leaved (auto unsubscribe)
     .subscribe(message => { console.log(message); this.websocketService.emitter.next(message); });  // And send the message through the websocket
     /************ END SEND JOYSTICKS COMMANDS ********************/
   }
@@ -155,7 +172,7 @@ export class NavigationPage implements OnInit, OnDestroy {
     /******************************* GPS POSITION *****************************************/
     let mapStream: Observable<GoogleMap> = Observable.of(this.googleMaps.create(document.getElementById('map'))); // Emit the googleMap instance
     let mapReadyStream = mapStream.mergeMap(map => Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)));   // Emit the mapReady event
-    
+
     mapStream
       .mergeMap(map => { map.setClickable(false); return Observable.fromPromise(map.one(GoogleMapsEvent.MAP_READY)) })  // Waiting the map to be ready
       .withLatestFrom(mapStream, (dummyEvent:any, map:GoogleMap) => map)                                                // Keep only the map (not the ready event)
@@ -179,22 +196,20 @@ export class NavigationPage implements OnInit, OnDestroy {
     //this.map.remove();
   }
 
-  processCoords(coords): number[] {
-    let x = (coords.x*2)/this.configService.config.tailleJoystick;
-    let y = (-coords.y*2)/this.configService.config.tailleJoystick;
-    return [
-      0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2),
-      0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2)
-    ].map(value => Math.round(1500+500*value));
+  processCoords(coords): Observable<number[]> {
+    return this.configService.config.asObservable()
+      .map((config:any) => {
+        let x = (coords.x*2)/config.tailleJoystick;
+        let y = (-coords.y*2)/config.tailleJoystick;
+        return [
+          0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)+2*y*Math.SQRT2) - 0.5*Math.sqrt(2-Math.pow(x,2)+Math.pow(y,2)-2*y*Math.SQRT2),
+          0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)+2*x*Math.SQRT2) - 0.5*Math.sqrt(2+Math.pow(x,2)-Math.pow(y,2)-2*x*Math.SQRT2)
+        ].map(value => Math.round(1500+500*value));
+      });
   }
 
   loiterMode(){
-    this.websocketService.emitter.next(JSON.stringify({
-      command: "changeMode",
-      data: {
-        pwm: 1300
-      }
-    }));
+    this.modeChannel.next(1300);
   }
 
   altHoldMode(){

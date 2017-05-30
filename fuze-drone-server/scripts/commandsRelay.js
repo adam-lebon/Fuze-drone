@@ -19,7 +19,7 @@ mavlinkCommandStream.subscribe(command => flightController.sendCommand(command.c
 mavlinkCommandStream.filter(command => command.cmdName === "rc_channels_override")
   .bufferTime(1000)
   .map(messages => messages.length)
-  .filter(count => count < 2)
+  .filter(count => count === 0)
   .subscribe(count => flightController.sendCommand('rc_channels_override', 0, 0, 0, 0, 0, 0, 0, 0));
 
 
