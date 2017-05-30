@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Settings</ion-title>
     <ion-buttons end>
       <button ion-button (click)="save()" color="royal">Save</button>
@@ -22,8 +22,8 @@
   <ion-item>
     <ion-select [(ngModel)]="config.modeJoystick">
       <ion-label>Mode</ion-label>
-      <ion-option value="semi">Semi(recommended)</ion-option>
-      <ion-option value="dynamic">Dynamic</ion-option>
+      <ion-option value="semi">Semi</ion-option>
+      <ion-option value="dynamic">Dynamic(recommended)</ion-option>
     </ion-select>
   </ion-item>
 </ion-list>

@@ -1,27 +1,33 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>FuzeDrone</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content class="cards-bg">
   <ion-grid>
-    <ion-row>
-      <ion-col col-md-4>
+    <br />
+    <br />
+    <ion-row align-items-center justify-content-center>
+      <ion-col col-xs-12 col-sm-8>
         <button ion-button full icon-left [navPush]="navigationPage" color="danger" round>
           <ion-icon name="game-controller-b"></ion-icon>
           Navigation
         </button>
       </ion-col>
+    </ion-row>
 
-      <ion-col col-md-4>
+    <ion-row align-items-center justify-content-center>
+      <ion-col col-xs-12 col-sm-8>
         <button ion-button full icon-left [navPush]="parametresPage" color="danger" round>
           <ion-icon name="cog"></ion-icon>
           Settings
         </button>
       </ion-col>
+    </ion-row>
 
-      <ion-col col-md-4>
+    <ion-row align-items-center justify-content-center>
+      <ion-col col-xs-12 col-sm-8>
         <button ion-button full icon-left [navPush]="informationsPage" color="danger" round>
           <ion-icon name="information-circle"></ion-icon>
           About

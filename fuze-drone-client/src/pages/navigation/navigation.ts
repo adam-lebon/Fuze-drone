@@ -63,10 +63,6 @@ export class NavigationPage implements OnInit, OnDestroy {
     this.websocketService.stream.subscribe(message => console.log(message));
     this.isAlive = true; // Keep observables alive
 
-    if(this.platform.is('mobile')) {
-      this.statusBar.hide();
-    }
-
     this.configService.config.subscribe((config:any) =>
       this.videoPlayer = new JSMpeg.Player('ws://'+ config.ipAdress +':7778/', {canvas: document.getElementById('video') })
     );
@@ -189,9 +185,6 @@ export class NavigationPage implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     this.isAlive = false; // Automatic unsubscribe all Observables
-    if(this.platform.is('mobile')) {
-      this.statusBar.show();
-    }
     this.videoPlayer.destroy();   // Disconnect the video websocket
     //this.map.remove();
   }

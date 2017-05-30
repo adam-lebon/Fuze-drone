@@ -10,7 +10,7 @@ export class ConfigService {
   config:ReplaySubject<Object> = new ReplaySubject();
 
   defaultConfig: Object = {
-    modeJoystick: "semi",
+    modeJoystick: "dynamic",
     tailleJoystick: 100,
     couleurGaucheJoystick: "red",
     couleurDroiteJoystick: "green",

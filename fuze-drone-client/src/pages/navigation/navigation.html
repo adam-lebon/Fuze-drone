@@ -1,8 +1,8 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title></ion-title>
     <ion-buttons left>
-      <ion-icon name="locate"></ion-icon><ion-badge>{{ (gpsStream | async)?.satellites_visible }}</ion-badge>
+      <ion-icon name="locate" color="white"></ion-icon><ion-badge>{{ (gpsStream | async)?.satellites_visible }}</ion-badge>
     </ion-buttons>
 
     <ion-buttons right>
@@ -13,23 +13,16 @@
       <button ion-button icon-only (click)="backgroundMode = 'video'" *ngIf="backgroundMode == 'map'" round>
         <ion-icon name="videocam"></ion-icon>
       </button>
-      <button ion-button (click)="altHoldMode()" color="dark" outline>Alt Hold</button>
+      <button ion-button (click)="altHoldMode()" color="white" outline>Alt Hold</button>
     </ion-buttons>
 
     <ion-buttons right>
-      <button ion-button (click)="loiterMode()" color="dark" outline>Loiter</button>
+      <button ion-button (click)="loiterMode()" color="white" outline>Loiter</button>
     </ion-buttons>
     <ion-buttons right>
-      <button ion-button (click)="autotuneMode()" color="dark" outline>AutoTune</button>
+      <button ion-button (click)="autotuneMode()" color="white" outline>AutoTune</button>
     </ion-buttons>
-    <!--<ion-buttons right>
-        <ion-label >Record</ion-label>
-        <ion-toggle (ionChange)="toggleRecord()" name="camera" value="false"></ion-toggle>
-      </ion-buttons>
-      <ion-buttons right>
-        <ion-label >Hornet</ion-label>
-        <ion-toggle (ionChange)="toggleHornets()" name="hornet" value="false"></ion-toggle>
-      </ion-buttons>-->
+
   </ion-navbar>
 </ion-header>
 

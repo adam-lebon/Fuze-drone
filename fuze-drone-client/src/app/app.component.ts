@@ -44,6 +44,7 @@ export class MyApp {
     ).subscribe(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+      this.statusBar.hide();
     });
   }
 
