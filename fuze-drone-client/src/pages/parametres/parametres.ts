@@ -13,15 +13,10 @@ export class ParametresPage implements OnInit {
   constructor(private toastCtrl: ToastController, private configService: ConfigService) { }
 
   ngOnInit(){
-    this.config = this.configService.config;
+    this.configService.config.subscribe(config => this.config = config);
   }
 
   save(){
-    this.configService.save().then(() => {
-      this.toastCtrl.create({
-        message: 'Config saved !',
-        duration: 2500
-      }).present();
-    });
+    this.configService.config.next(this.config);
   }
 }
